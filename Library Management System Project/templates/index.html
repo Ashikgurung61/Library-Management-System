@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Portal | Nexus</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-pattern {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 3rem 2.5rem;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 560px;
+            width: 90%;
+            position: relative;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            color: #f8fafc;
+            margin-bottom: 2.5rem;
+            font-size: 2.75rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 2px;
+        }
+
+        .login-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .login-btn {
+            padding: 1.75rem;
+            text-decoration: none;
+            color: white;
+            border-radius: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-btn:hover::before {
+            opacity: 1;
+        }
+
+        .admin-btn {
+            --accent: #818cf8;
+        }
+
+        .user-btn {
+            --accent: #34d399;
+        }
+
+        .login-btn i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            transition: transform 0.3s ease;
+        }
+
+        .login-btn:hover i {
+            transform: scale(1.1);
+        }
+
+        .login-btn span {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #f8fafc;
+            letter-spacing: 0.025em;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 2rem;
+            color: rgba(248, 250, 252, 0.6);
+            text-align: center;
+            font-size: 0.875rem;
+            font-weight: 300;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-options {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2.25rem;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f8fafc;
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    <div class="logo">📚 GurungLib</div>
+    
+    <div class="container">
+        <h1>Library Portal</h1>
+        <div class="login-options">
+            <a href="login" class="login-btn admin-btn">
+                <i class="fas fa-user-lock"></i>
+                <span>Administrator Access</span>
+            </a>
+            <a href="login" class="login-btn user-btn">
+                <i class="fas fa-users"></i>
+                <span>Patron Login</span>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>2025 Gurung Library System • vx2.1.0</p>
+    </footer>
+    <script>
+        // Redirect any accidental direct access to dashboard
+        if(window.location.pathname === '/dashboard') {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
