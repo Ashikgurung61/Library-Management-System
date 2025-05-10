@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users | GurungLib Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Additional styles specific to users page */
+        .user-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .users-table th, .users-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .users-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .users-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .delete-btn {
+            background: #f44336;
+            color: white;
+        }
+        
+        .status-active {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+        
+        .status-inactive {
+            color: #f44336;
+            font-weight: 600;
+        }
+                * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f6fa;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            width: 250px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .nav-links {
+            margin-top: 30px;
+        }
+
+        .nav-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            padding: 15px;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #34495e;
+            color: white;
+        }
+
+        .main-content {
+            padding: 30px;
+            margin-left: 250px;
+        }
+
+        .main-content h1 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .fine-amount {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>GurungLib Admin</h2>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard"><i class="fas fa-home"></i> Home</a>
+            <a href="books"><i class="fas fa-book"></i> Manage Books</a>
+            <a href="users" class="active"><i class="fas fa-users"></i> Manage Users</a>
+            <a href="transactions"><i class="fas fa-history"></i> Transaction History</a>
+            <a href="fines"><i class="fas fa-dollar-sign"></i> Fines Management</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h1>Manage Users</h1>
+        
+        <div class="user-actions">
+            <button class="btn"><i class="fas fa-user-plus"></i> Add New User</button>
+            <button class="btn"><i class="fas fa-file-export"></i> Export Users</button>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" placeholder="Search users by name, email, or ID...">
+        </div>
+        
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Membership</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>LIB1001</td>
+                    <td>John Doe</td>
+                    <td>john@example.com</td>
+                    <td>9876543210</td>
+                    <td>Premium</td>
+                    <td class="status-active">Active</td>
+                    <td>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LIB1002</td>
+                    <td>Jane Smith</td>
+                    <td>jane@example.com</td>
+                    <td>9876543211</td>
+                    <td>Standard</td>
+                    <td class="status-active">Active</td>
+                    <td>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LIB1003</td>
+                    <td>Robert Johnson</td>
+                    <td>robert@example.com</td>
+                    <td>9876543212</td>
+                    <td>Standard</td>
+                    <td class="status-inactive">Inactive</td>
+                    <td>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LIB1004</td>
+                    <td>Emily Davis</td>
+                    <td>emily@example.com</td>
+                    <td>9876543213</td>
+                    <td>Premium</td>
+                    <td class="status-active">Active</td>
+                    <td>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LIB1005</td>
+                    <td>Michael Wilson</td>
+                    <td>michael@example.com</td>
+                    <td>9876543214</td>
+                    <td>Standard</td>
+                    <td class="status-inactive">Inactive</td>
+                    <td>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Add your JavaScript functionality here
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Edit user functionality
+                const userId = this.closest('tr').querySelector('td:first-child').textContent;
+                alert(`Edit user with ID: ${userId}`);
+            });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Delete user functionality
+                const userId = this.closest('tr').querySelector('td:first-child').textContent;
+                if(confirm(`Are you sure you want to delete user ${userId}?`)) {
+                    this.closest('tr').remove();
+                }
+            });
+        });
+
+        // Search functionality
+        document.querySelector('.search-bar input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.users-table tbody tr').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
