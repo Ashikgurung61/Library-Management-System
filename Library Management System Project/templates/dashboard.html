@@ -394,6 +394,8 @@ body {
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
         }
 
         .modal-header {
@@ -449,8 +451,8 @@ body {
         }
         .quick-actions{
             display:inline-block;
-           margin-left: 40px;
-           height: 200px;
+            margin-left: 40px;
+            height: 200px;
         }
 
         .btn {
@@ -469,7 +471,7 @@ body {
             width: 100%;
             padding: 10px 200px; 
             height: 60px; 
-            
+            position: relative;
         }
          .btn-primary2 {
             background: #a5312b;
@@ -478,6 +480,7 @@ body {
             padding: 10px 200px; 
             height: 60px; 
             margin-top: 30px; 
+            position: relative;
         }
 
         .btn-secondary {
@@ -520,7 +523,7 @@ body {
         <div class="dashboard-cards">
             <div class="card">
                 <i class="fas fa-book-open card-icon"></i>
-                <h3>Books Issued</h3>
+                <h3>Total Books</h3>
                 <p id="booksIssued">{{ book_count }}</p>
             </div>
             <div class="card">
@@ -648,38 +651,83 @@ body {
         </div>
     </div>
 
-    <!-- Issue Book Modal -->
+    <!-- -----------------------------------------Issue Book------------------------- -->
     <div id="issueBookModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Issue Book</h2>
-                <button class="close-btn">&times;</button>
-            </div>
-            <form id="issueBookForm">
-                <div class="form-group">
-                    <label for="issueUserId">User ID</label>
-                    <input type="text" id="issueUserId" required>
-                </div>
-                <div class="form-group">
-                    <label for="issueBookId">Book ID</label>
-                    <input type="text" id="issueBookId" required>
-                </div>
-                <div class="form-group">
-                    <label for="issueDate">Issue Date</label>
-                    <input type="date" id="issueDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="dueDate">Due Date</label>
-                    <input type="date" id="dueDate" required>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary close-btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Issue Book</button>
-                </div>
-            </form>
+    <div class="modal-content">
+        <div class="modal-header">
+            
+            <h2>Issue Book</h2>
+            <button type="button" class="close-btn">&times;</button>
         </div>
+        
+        <form id="issueBookForm" method="POST" action="/issue-book">
+            <div class="form-group">
+                <label for="issueUserId">User ID</label>
+                <input type="text" id="issueUserId" name="user_id" required
+                       value="{{ request.query_params.user_id if request.query_params.user_id else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="issueBookId">Book ID</label>
+                <input type="number" id="issueBookId" name="book_id" required
+                       value="{{ request.query_params.book_id if request.query_params.book_id else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="issueDate">Issue Date</label>
+                <input type="date" id="issueDate" name="issue_date" required
+                       value="{{ request.query_params.issue_date if request.query_params.issue_date else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" name="due_date" required
+                       value="{{ request.query_params.due_date if request.query_params.due_date else '' }}">
+            </div>
+            <div class="form-actions" onclick="handleMicClick()">
+                <button type="button" class="btn btn-secondary close-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Issue Book</button>
+            </div>
+        </form>
     </div>
+</div>
 
+    <script>
+    document.getElementById('issueBookForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    try {
+        const formData = new FormData(this);
+        const response = await fetch('/issue-book', {
+            method: 'POST',
+            body: new URLSearchParams(formData) // Convert to URL-encoded format
+        });
+
+        // Check for HTTP errors first
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Verify JSON content type
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Invalid response format');
+        }
+
+        const result = await response.json();
+
+        // Handle server-defined success state
+        if (result.success) {
+            alert(result.message || 'Book issued successfully');
+            this.reset();
+            window.location.reload(); // Better than href for dashboard updates
+        } else {
+            alert(result.message || 'Operation failed');
+        }
+    } catch (error) {
+        console.error('Submission Error:', error);
+        alert(error.message || 'Failed to process request. Check console for details');
+    }
+});
+
+</script>
     <!-- Return Book Modal -->
     <div id="returnBookModal" class="modal">
         <div class="modal-content">
@@ -687,14 +735,14 @@ body {
                 <h2>Return Book</h2>
                 <button class="close-btn">&times;</button>
             </div>
-            <form id="returnBookForm">
+            <form id="returnBookForm" method = "POST" action = "/return_book">
                 <div class="form-group">
                     <label for="transactionId">Transaction ID</label>
-                    <input type="text" id="transactionId" required>
+                    <input type="text" id="transactionId" name = "transaction_id" required>
                 </div>
                 <div class="form-group">
                     <label for="returnDate">Return Date</label>
-                    <input type="date" id="returnDate" required>
+                    <input type="date" id="returnDate" name = "return_date" required>
                 </div>
                 <div class="form-group">
                     <label for="fineAmount">Fine Amount (if any)</label>
@@ -707,6 +755,45 @@ body {
             </form>
         </div>
     </div>
+    <script>
+        document.getElementById('returnBookForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    try {
+        const formData = new FormData(this);
+        const response = await fetch('/return_book', {
+            method: 'POST',
+            body: new URLSearchParams(formData) // URL-encoded format
+        });
+
+        // Check HTTP errors first
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Verify JSON response
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Invalid server response format');
+        }
+
+        const result = await response.json();
+
+        // Handle server response
+        if (result.success) {
+            alert(result.message || 'Book returned successfully');
+            this.reset();
+            document.getElementById('returnBookModal').style.display = 'none';
+            window.location.reload(); // Refresh dashboard data
+        } else {
+            alert(result.message || 'Return operation failed');
+        }
+    } catch (error) {
+        console.error('Return Submission Error:', error);
+        alert(error.message || 'Failed to process return. Check console for details');
+    }
+});
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <script>
@@ -761,11 +848,9 @@ body {
         // Open modals
         issueBookBtn.addEventListener('click', () => {
             issueBookModal.style.display = 'flex';
-            // Set today's date as default
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('issueDate').value = today;
             
-            // Set due date (14 days from today)
             const dueDate = new Date();
             dueDate.setDate(dueDate.getDate() + 14);
             document.getElementById('dueDate').value = dueDate.toISOString().split('T')[0];
@@ -795,96 +880,7 @@ body {
                 returnBookModal.style.display = 'none';
             }
         });
-
-        // Form submissions
-        document.getElementById('issueBookForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Get form values
-            const userId = document.getElementById('issueUserId').value;
-            const bookId = document.getElementById('issueBookId').value;
-            const issueDate = document.getElementById('issueDate').value;
-            const dueDate = document.getElementById('dueDate').value;
-            
-            // In a real app, you would send this data to your backend
-            console.log('Issuing book:', { userId, bookId, issueDate, dueDate });
-            
-            // Show success message
-            alert(`Book ${bookId} issued to user ${userId} successfully!`);
-            
-            // Close modal and reset form
-            issueBookModal.style.display = 'none';
-            e.target.reset();
-            
-            // Update dashboard stats
-            updateStats();
-        });
-
-        document.getElementById('returnBookForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Get form values
-            const transactionId = document.getElementById('transactionId').value;
-            const returnDate = document.getElementById('returnDate').value;
-            const fineAmount = document.getElementById('fineAmount').value;
-            
-            // In a real app, you would send this data to your backend
-            console.log('Returning book:', { transactionId, returnDate, fineAmount });
-            
-            // Show success message
-            alert(`Transaction ${transactionId} marked as returned with fine amount: $${fineAmount}`);
-            
-            // Close modal and reset form
-            returnBookModal.style.display = 'none';
-            e.target.reset();
-            
-            // Update dashboard stats
-            updateStats();
-        });
-
-    //     // Update dashboard statistics
-    //     function updateStats() {
-    //         // In a real app, you would fetch these from your backend
-    //         const newBooksIssued = Math.floor(Math.random() * 5) + 1;
-    //         const newReturns = Math.floor(Math.random() * 3) + 1;
-    //         const newFines = Math.floor(Math.random() * 50) + 10;
-            
-    //         // Update the displayed values with animation
-    //         animateValue('booksIssued', parseInt(document.getElementById('booksIssued').textContent.replace(',', '')), parseInt(document.getElementById('booksIssued').textContent.replace(',', '')) + newBooksIssued, 1000);
-    //         animateValue('pendingFines', parseInt(document.getElementById('pendingFines').textContent.replace('$', '').replace(',', '')), parseInt(document.getElementById('pendingFines').textContent.replace('$', '').replace(',', '')) + newFines, 1000);
-    //     }
-
-    //     // Animate value changes
-    //     function animateValue(id, start, end, duration) {
-    //         const obj = document.getElementById(id);
-    //         let startTimestamp = null;
-    //         const step = (timestamp) => {
-    //             if (!startTimestamp) startTimestamp = timestamp;
-    //             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                
-    //             // Format numbers with commas
-    //             if (id === 'pendingFines') {
-    //                 obj.innerHTML = '$' + Math.floor(progress * (end - start) + start).toLocaleString();
-    //             } else {
-    //                 obj.innerHTML = (Math.floor(progress * (end - start) + start).toLocaleString());
-    //             }
-                
-    //             if (progress < 1) {
-    //                 window.requestAnimationFrame(step);
-    //             }
-    //         };
-    //         window.requestAnimationFrame(step);
-    //     }
-
-    //     // Initialize with animated values
-    //     window.addEventListener('load', () => {
-    //         animateValue('booksIssued', 0, 1234, 1500);
-    //         animateValue('overdueBooks', 0, 56, 1500);
-    //         animateValue('pendingFines', 0, 1230, 1500);
-    //         animateValue('newBooksToday', 0, 12, 1500);
-    //         animateValue('borrowersThisWeek', 0, 84, 1500);
-    //     });
-    // </script>
+    </script>
     <script>
         let slideIndex = 1;
 showSlides(slideIndex);
@@ -915,5 +911,7 @@ function showSlides(n) {
   dots[slideIndex-1].className += " active";
 }
     </script>
+
+
 </body>
 </html>
