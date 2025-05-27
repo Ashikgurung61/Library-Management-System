@@ -16,9 +16,9 @@
 
 body {
     background: #f5f6fa;
-    display: grid;
-    grid-template-columns: 250px 1fr;
+    padding-left: 0px;
     min-height: 100vh;
+    margin: 0;
 }
 
 .sidebar {
@@ -49,11 +49,7 @@ body {
             color: #bdc3c7;
             text-decoration: none;
             padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-radius: 5px;
-            margin-bottom: 5px;
+            display: block;
             transition: all 0.3s ease;
         }
 
@@ -578,65 +574,14 @@ body {
     <a class="next" onclick="plusSlides(1)">&#10095;</a>
   </div>
   <br>
-  
-  <!-- The dots/circles -->
   <div class="dotcircle">
     <span class="dot" onclick="currentSlide(1)"></span>
     <span class="dot" onclick="currentSlide(2)"></span>
     <span class="dot" onclick="currentSlide(3)"></span>
   </div>
-        
-        <div class="dashboard-grid">
-            <div class="chart-container">
-                <h2>Monthly Circulation</h2>
-                <canvas id="circulationChart" height="300"></canvas>
-            </div>
-            
-            <div class="recent-activity">
-                <h2>Recent Activity</h2>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <div class="activity-details">
-                        <h4>New Book Added</h4>
-                        <p>"The Midnight Library" by Matt Haig</p>
-                    </div>
-                    <div class="activity-time">2 hours ago</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-                    <div class="activity-details">
-                        <h4>New Member Registered</h4>
-                        <p>Sarah Johnson</p>
-                    </div>
-                    <div class="activity-time">5 hours ago</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-undo"></i>
-                    </div>
-                    <div class="activity-details">
-                        <h4>Book Returned</h4>
-                        <p>"Atomic Habits" by James Clear</p>
-                    </div>
-                    <div class="activity-time">Yesterday</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="activity-details">
-                        <h4>Overdue Book</h4>
-                        <p>"Sapiens" by Yuval Noah Harari</p>
-                    </div>
-                    <div class="activity-time">2 days ago</div>
-                </div>
-            </div>
-        </div>
+<!-- ---------------------------------Top 10---------------------------------------------------- -->
 
+<!-- ------------------------------------------------------------------------------------- -->
         <div class="transactions">
             <h4>Transaction</h4>
         </div>
@@ -794,50 +739,7 @@ body {
     }
 });
     </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <script>
-        const ctx = document.getElementById('circulationChart').getContext('2d');
-        const circulationChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Books Checked Out',
-                    data: [320, 290, 350, 410, 380, 420, 450, 470, 390, 430, 460, 500],
-                    backgroundColor: 'rgba(76, 175, 80, 0.7)',
-                    borderColor: 'rgba(76, 175, 80, 1)',
-                    borderWidth: 1
-                }, {
-                    label: 'Books Returned',
-                    data: [300, 280, 330, 390, 360, 400, 430, 450, 370, 410, 440, 480],
-                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                    borderColor: 'rgba(52, 152, 219, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 100
-                        }
-                    }
-                }
-            }
-        });
-
         // Modal functionality
         const issueBookModal = document.getElementById('issueBookModal');
         const returnBookModal = document.getElementById('returnBookModal');
