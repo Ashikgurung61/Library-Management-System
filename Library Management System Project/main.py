@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, HTTPException
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, APIRouter
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.status import HTTP_302_FOUND
@@ -6,9 +6,12 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import User, StudentID, aboutBooks, Transaction, Fine
 from sqlalchemy import func, cast, Date, distinct, extract
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from fastapi.responses import JSONResponse
 from decimal import Decimal
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -113,6 +116,14 @@ async def issue_book(
         )
     
 #------------------Fine status update from manage Fine Management----------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For development only
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.post("/return_book")
 async def return_books(
     transaction_id = Form(...),
@@ -171,3 +182,64 @@ def booksDetail(request: Request):
 @app.get("/users", response_class= HTMLResponse)
 def usersDetail(request: Request):
     return templates.TemplateResponse("users.html", {"request": request})
+
+#----------------------------- Manage Books-----------------------------------------------------------
+class BookCreate(BaseModel):
+    title: str
+    author: str
+    isbn: str
+    category: str
+    publisher: str
+    quantity: int
+
+class BookResponse(BookCreate):
+    book_id: int
+    added_at: datetime
+
+@app.post("/books/", response_model=BookResponse)
+def create_book(book: BookCreate):
+    db = SessionLocal()
+    try:
+        db_book = aboutBooks(**book.dict())
+        db.add(db_book)
+        db.commit()
+        db.refresh(db_book)
+        return db_book
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        db.close()
+
+# Update your read_books endpoint for better error reporting
+@app.get("/books/", response_model=list[BookResponse])
+def read_books():
+    db = SessionLocal()
+    try:
+        db.execute(text("SELECT 1")).fetchall()
+        books = db.query(aboutBooks).all()
+        return books
+    except Exception as e:
+        print(f"Database error: {str(e)}")  # Check terminal for actual error
+        raise HTTPException(
+            status_code=500,
+            detail=f"Database connection failed: {str(e)}"
+        )
+    finally:
+        db.close()
+
+@app.delete("/books/{book_id}")
+def delete_book(book_id: int):
+    db = SessionLocal()
+    book = db.query(aboutBooks).filter(aboutBooks.book_id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    try:
+        db.delete(book)
+        db.commit()
+        return {"message": "Book deleted successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close()
